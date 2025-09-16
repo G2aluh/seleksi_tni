@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:seleksi_tni/widgets/errror_koneksi.dart';
 import '../data/models/peserta_model.dart';
 import '../data/service/supabase_service.dart';
 import 'detail_peserta_page.dart';
@@ -23,26 +24,33 @@ class _PesertaListPageState extends State<PesertaListPage> {
     _loadPeserta();
   }
 
-  Future<void> _loadPeserta() async {
-    setState(() {
-      _isLoading = true;
-    });
+ Future<void> _loadPeserta() async {
+  setState(() {
+    _isLoading = true;
+  });
 
-    try {
-      final peserta = await _supabaseService.getPeserta();
-      setState(() {
-        _pesertaList = peserta;
-        _isLoading = false;
-      });
-    } catch (e) {
-      setState(() {
-        _isLoading = false;
-      });
-      if (mounted) {
-        CustomToast.error(context, 'Error: $e');
-      }
-    }
+  try {
+    final peserta = await _supabaseService.getPeserta();
+    setState(() {
+      _pesertaList = peserta;
+      _isLoading = false;
+    });
+  } catch (e) {
+  setState(() {
+    _isLoading = false;
+  });
+
+  if (e.toString().contains("SocketException")) {
+    // Tidak ada internet
+    showNoInternetDialog(context, _loadPeserta);
+  } else {
+    // Masalah koneksi Supabase
+    showSupabaseErrorDialog(context, e.toString(), _loadPeserta);
   }
+}
+
+}
+
 
   Future<void> _deletePeserta(int id) async {
     try {

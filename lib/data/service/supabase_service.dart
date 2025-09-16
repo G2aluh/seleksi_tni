@@ -5,9 +5,18 @@ class SupabaseService {
   final supabase = Supabase.instance.client;
 
   Future<List<PesertaModel>> getPeserta() async {
+  try {
+    // Cek koneksi (opsional, sudah ditangani di UI)
     final response = await supabase.from('peserta_tni').select();
     return (response as List).map((e) => PesertaModel.fromMap(e)).toList();
+  } catch (e) {
+    if (e is PostgrestException) {
+      throw Exception('Error server: ${e.message}');
+    } else {
+      throw Exception('Terjadi kesalahan saat memuat data: $e');
+    }
   }
+}
 
   Future<void> addPeserta(PesertaModel peserta) async {
     await supabase.from('peserta_tni').insert(peserta.toMap());

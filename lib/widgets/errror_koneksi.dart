@@ -1,21 +1,29 @@
 import 'package:flutter/material.dart';
 
-Widget noInternetWidget(VoidCallback onRetry) {
-  return Center(
-    child: Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        const Icon(Icons.wifi_off, size: 80, color: Colors.red),
-        const SizedBox(height: 16),
-        const Text(
-          "Tidak ada koneksi internet",
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 8),
-        const Text("Periksa jaringan Anda lalu coba lagi."),
-        const SizedBox(height: 16),
+/// 🔌 Dialog error untuk no internet
+void showNoInternetDialog(BuildContext context, VoidCallback onRetry) {
+  showDialog(
+    context: context,
+    barrierDismissible: false, // ⛔ tidak bisa close dengan tap luar
+    builder: (_) => AlertDialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      title: Row(
+        children: const [
+          Icon(Icons.wifi_off, color: Colors.red),
+          SizedBox(width: 8),
+          Text("Tidak ada koneksi"),
+        ],
+      ),
+      content: const Text(
+        "Periksa jaringan Anda lalu coba lagi.",
+        style: TextStyle(fontSize: 14),
+      ),
+      actions: [
         ElevatedButton.icon(
-          onPressed: onRetry,
+          onPressed: () {
+            Navigator.of(context).pop(); // Tutup dialog
+            onRetry(); // Jalankan aksi retry
+          },
           icon: const Icon(Icons.refresh),
           label: const Text("Coba Lagi"),
         ),
@@ -24,22 +32,33 @@ Widget noInternetWidget(VoidCallback onRetry) {
   );
 }
 
-Widget supabaseErrorWidget(String message, VoidCallback onRetry) {
-  return Center(
-    child: Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        const Icon(Icons.cloud_off, size: 80, color: Colors.orange),
-        const SizedBox(height: 16),
-        const Text(
-          "Masalah koneksi ke server",
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 8),
-        Text('Coba periksa internet anda dan coba lagi', textAlign: TextAlign.center),
-        const SizedBox(height: 16),
+/// ☁️ Dialog error untuk Supabase
+void showSupabaseErrorDialog(
+    BuildContext context, String message, VoidCallback onRetry) {
+  showDialog(
+    context: context,
+    barrierDismissible: false, // ⛔ tidak bisa close manual
+    builder: (_) => AlertDialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      title: Row(
+        children: const [
+          Icon(Icons.cloud_off, color: Colors.orange),
+          SizedBox(width: 8),
+          Text("Masalah Server"),
+        ],
+      ),
+      content: Text(
+        message.isNotEmpty
+            ? message
+            : "Terjadi masalah koneksi ke server. Periksa internet Anda lalu coba lagi.",
+        style: const TextStyle(fontSize: 14),
+      ),
+      actions: [
         OutlinedButton.icon(
-          onPressed: onRetry,
+          onPressed: () {
+            Navigator.of(context).pop(); // Tutup dialog
+            onRetry(); // Jalankan aksi retry
+          },
           icon: const Icon(Icons.refresh),
           label: const Text("Muat Ulang"),
         ),
