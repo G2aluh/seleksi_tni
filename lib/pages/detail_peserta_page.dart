@@ -224,7 +224,7 @@ class DetailPesertaPage extends StatelessWidget {
                 ),
                 const SizedBox(height: 12),
                 _infoCard(
-                  "No HP/Telp",
+                  " /Telp",
                   peserta.noHp,
                   Icons.phone,
                   const Color(0xFF3B82F6),

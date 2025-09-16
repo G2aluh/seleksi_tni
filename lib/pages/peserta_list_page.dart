@@ -345,6 +345,7 @@ class _PesertaListPageState extends State<PesertaListPage> {
       context: context,
       builder: (context) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        
         title: Row(
           children: [
             Icon(Icons.warning, color: Colors.orange[600], size: 24),

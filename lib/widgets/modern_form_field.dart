@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class ModernFormField extends StatelessWidget {
   final String label;
@@ -10,6 +11,10 @@ class ModernFormField extends StatelessWidget {
   final bool obscureText;
   final int? maxLines;
   final String? hintText;
+  final bool readOnly;
+  final FocusNode? focusNode;
+  final List<TextInputFormatter>? inputFormatters; // Tambahkan ini
+  
 
   const ModernFormField({
     super.key,
@@ -22,6 +27,9 @@ class ModernFormField extends StatelessWidget {
     this.obscureText = false,
     this.maxLines = 1,
     this.hintText,
+    this.readOnly = false,
+    this.focusNode, // Opsional
+    this.inputFormatters, // Tambahkan ini
   });
 
   @override
@@ -44,6 +52,9 @@ class ModernFormField extends StatelessWidget {
           validator: validator,
           obscureText: obscureText,
           maxLines: maxLines,
+          readOnly: readOnly,
+          focusNode: focusNode, // Terapkan focusNode
+          inputFormatters: inputFormatters, // Terapkan inputFormatters
           decoration: InputDecoration(
             hintText: hintText,
             prefixIcon: prefixIcon,

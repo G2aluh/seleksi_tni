@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../data/models/peserta_model.dart';
 import '../data/service/supabase_service.dart';
 import '../widgets/modern_form_field.dart';
@@ -18,9 +19,11 @@ class _FormPesertaPageState extends State<FormPesertaPage> {
   final _formKey = GlobalKey<FormState>();
   final SupabaseService service = SupabaseService();
   bool _isLoading = false;
+  bool _isLoadingSuggestions = false; // Untuk indikator loading di autocomplete
   int _currentStep = 0;
+  int? _dataDusunId; // Untuk menyimpan ID dari data_dusun
 
-  // controller
+  // Controller
   final TextEditingController nisnC = TextEditingController();
   final TextEditingController namaC = TextEditingController();
   final TextEditingController agamaC = TextEditingController();
@@ -28,7 +31,6 @@ class _FormPesertaPageState extends State<FormPesertaPage> {
   final TextEditingController tanggalLahirC = TextEditingController();
   final TextEditingController noHpC = TextEditingController();
   final TextEditingController nikC = TextEditingController();
-
   final TextEditingController jalanC = TextEditingController();
   final TextEditingController rtRwC = TextEditingController();
   final TextEditingController dusunC = TextEditingController();
@@ -37,7 +39,6 @@ class _FormPesertaPageState extends State<FormPesertaPage> {
   final TextEditingController kabupatenC = TextEditingController();
   final TextEditingController provinsiC = TextEditingController();
   final TextEditingController kodePosC = TextEditingController();
-
   final TextEditingController ayahC = TextEditingController();
   final TextEditingController ibuC = TextEditingController();
   final TextEditingController waliC = TextEditingController();
@@ -47,9 +48,10 @@ class _FormPesertaPageState extends State<FormPesertaPage> {
 
   @override
   void initState() {
+    provinsiC.text = 'Jawa Timur';
     super.initState();
     if (widget.peserta != null) {
-      // isi data kalau mode edit
+      // Isi data kalau mode edit
       final p = widget.peserta!;
       nisnC.text = p.nisn;
       namaC.text = p.namaLengkap;
@@ -67,7 +69,6 @@ class _FormPesertaPageState extends State<FormPesertaPage> {
 
       noHpC.text = p.noHp;
       nikC.text = p.nik;
-
       jalanC.text = p.jalan;
       rtRwC.text = p.rtRw;
       dusunC.text = p.dusun;
@@ -76,16 +77,16 @@ class _FormPesertaPageState extends State<FormPesertaPage> {
       kabupatenC.text = p.kabupaten;
       provinsiC.text = p.provinsi;
       kodePosC.text = p.kodePos;
-
       ayahC.text = p.namaAyah;
       ibuC.text = p.namaIbu;
       waliC.text = p.namaWali;
       alamatOrtuC.text = p.alamatOrtu;
+      _dataDusunId = p.dataDusunId; 
     }
   }
 
   void _nextStep() {
-    if (_validateCurrentStep()) {
+    if (_formKey.currentState!.validate() && _validateCurrentStep()) {
       setState(() {
         _currentStep++;
       });
@@ -117,7 +118,8 @@ class _FormPesertaPageState extends State<FormPesertaPage> {
             kecamatanC.text.isNotEmpty &&
             kabupatenC.text.isNotEmpty &&
             provinsiC.text.isNotEmpty &&
-            kodePosC.text.isNotEmpty;
+            kodePosC.text.isNotEmpty &&
+            _dataDusunId != null; // Validasi data_dusun_id
       case 2: // Orang Tua/Wali
         return ayahC.text.isNotEmpty &&
             ibuC.text.isNotEmpty &&
@@ -128,7 +130,7 @@ class _FormPesertaPageState extends State<FormPesertaPage> {
   }
 
   Future<void> _saveData() async {
-    if (_formKey.currentState!.validate()) {
+    if (_formKey.currentState!.validate() && _validateCurrentStep()) {
       setState(() {
         _isLoading = true;
       });
@@ -155,6 +157,7 @@ class _FormPesertaPageState extends State<FormPesertaPage> {
           namaIbu: ibuC.text,
           namaWali: waliC.text,
           alamatOrtu: alamatOrtuC.text,
+          dataDusunId: _dataDusunId,
         );
 
         if (widget.peserta == null) {
@@ -166,7 +169,7 @@ class _FormPesertaPageState extends State<FormPesertaPage> {
         }
 
         if (mounted) {
-          Navigator.pop(context, true); // Return true to indicate success
+          Navigator.pop(context, true);
         }
       } catch (e) {
         CustomToast.error(context, 'Error: $e');
@@ -239,6 +242,12 @@ class _FormPesertaPageState extends State<FormPesertaPage> {
           label: "NISN",
           controller: nisnC,
           keyboardType: TextInputType.number,
+          inputFormatters: [
+            FilteringTextInputFormatter.digitsOnly, // Hanya izinkan angka
+            LengthLimitingTextInputFormatter(
+              10,
+            ), // Batas panjang (misalnya, 10 digit untuk NISN)
+          ],
           prefixIcon: const Icon(
             Icons.badge,
             size: 16,
@@ -301,7 +310,10 @@ class _FormPesertaPageState extends State<FormPesertaPage> {
         ModernFormField(
           label: "No HP/Telp",
           controller: noHpC,
-          keyboardType: TextInputType.phone,
+          inputFormatters: [
+            FilteringTextInputFormatter.digitsOnly, // Hanya izinkan angka
+          ],
+          keyboardType: TextInputType.number,
           prefixIcon: const Icon(
             Icons.phone,
             size: 16,
@@ -313,6 +325,9 @@ class _FormPesertaPageState extends State<FormPesertaPage> {
         ModernFormField(
           label: "NIK",
           controller: nikC,
+          inputFormatters: [
+            FilteringTextInputFormatter.digitsOnly, // Hanya izinkan angka
+          ],
           keyboardType: TextInputType.number,
           prefixIcon: const Icon(
             Icons.credit_card,
@@ -354,20 +369,97 @@ class _FormPesertaPageState extends State<FormPesertaPage> {
           validator: (v) => v == null || v.isEmpty ? "RT/RW wajib diisi" : null,
         ),
         const SizedBox(height: 16),
-        ModernFormField(
-          label: "Dusun",
-          controller: dusunC,
-          prefixIcon: const Icon(
-            Icons.location_pin,
-            size: 16,
-            color: Color(0xFF6B7280),
-          ),
-          validator: (v) => v == null || v.isEmpty ? "Dusun wajib diisi" : null,
+        Autocomplete<String>(
+          optionsBuilder: (TextEditingValue textEditingValue) async {
+            if (textEditingValue.text.isEmpty) {
+              return [];
+            }
+            setState(() => _isLoadingSuggestions = true);
+            final suggestions = await service.getDusunSuggestions(
+              textEditingValue.text,
+            );
+            setState(() => _isLoadingSuggestions = false);
+
+            if (suggestions.isEmpty) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('Tidak ada saran dusun ditemukan!'),
+                  backgroundColor: Colors.red,
+                ),
+              );
+            }
+            return suggestions;
+          },
+          onSelected: (String selectedDusun) async {
+            setState(() => _isLoadingSuggestions = true);
+            final details = await service.getDusunDetails(selectedDusun);
+            setState(() => _isLoadingSuggestions = false);
+            if (details != null) {
+              setState(() {
+                dusunC.text = selectedDusun;
+                desaC.text = details['desa'] ?? '';
+                kecamatanC.text = details['kecamatan'] ?? '';
+                kabupatenC.text = details['kabupaten'] ?? '';
+                kodePosC.text = details['kode_pos'] ?? '';
+                _dataDusunId = details['id'];
+              });
+            } else {
+              CustomToast.error(context, 'Dusun tidak ditemukan!');
+            }
+          },
+          fieldViewBuilder: (context, controller, focusNode, onFieldSubmitted) {
+            return ModernFormField(
+              label: "Dusun",
+              controller: controller,
+              focusNode: focusNode,
+              prefixIcon: const Icon(
+                Icons.location_pin,
+                size: 16,
+                color: Color(0xFF6B7280),
+              ),
+              suffixIcon: _isLoadingSuggestions
+                  ? const SizedBox(
+                      width: 16,
+                      height: 16,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  : null,
+              validator: (v) =>
+                  v == null || v.isEmpty ? "Dusun wajib diisi" : null,
+            );
+          },
+          optionsViewBuilder: (context, onSelected, options) {
+            return Align(
+              alignment: Alignment.topLeft,
+              child: Material(
+                elevation: 4.0,
+                color: Colors.white,
+                child: SizedBox(
+                  height: 200.0,
+                  child: ListView.builder(
+                    padding: const EdgeInsets.all(8.0),
+                    itemCount: options.length,
+                    itemBuilder: (context, index) {
+                      final option = options.elementAt(index);
+                      return GestureDetector(
+                        onTap: () => onSelected(option),
+                        child: ListTile(
+                          title: Text(option),
+                          tileColor: Colors.grey[100],
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ),
+            );
+          },
         ),
         const SizedBox(height: 16),
         ModernFormField(
           label: "Desa",
           controller: desaC,
+
           prefixIcon: const Icon(
             Icons.location_city,
             size: 16,
@@ -379,6 +471,7 @@ class _FormPesertaPageState extends State<FormPesertaPage> {
         ModernFormField(
           label: "Kecamatan",
           controller: kecamatanC,
+
           prefixIcon: const Icon(
             Icons.apartment,
             size: 16,
@@ -391,6 +484,7 @@ class _FormPesertaPageState extends State<FormPesertaPage> {
         ModernFormField(
           label: "Kabupaten",
           controller: kabupatenC,
+
           prefixIcon: const Icon(
             Icons.account_balance,
             size: 16,
@@ -411,6 +505,9 @@ class _FormPesertaPageState extends State<FormPesertaPage> {
         ModernFormField(
           label: "Kode Pos",
           controller: kodePosC,
+          inputFormatters: [
+            FilteringTextInputFormatter.digitsOnly, // Hanya izinkan angka
+          ],
           keyboardType: TextInputType.number,
           prefixIcon: const Icon(
             Icons.local_post_office,
@@ -464,7 +561,7 @@ class _FormPesertaPageState extends State<FormPesertaPage> {
         ModernFormField(
           label: "Alamat Orang Tua/Wali",
           controller: alamatOrtuC,
-          maxLines: 3,
+          maxLines: 1,
           prefixIcon: const Icon(
             Icons.home,
             size: 16,
@@ -565,10 +662,9 @@ class _FormPesertaPageState extends State<FormPesertaPage> {
                           ? null
                           : (_currentStep == 2 ? _saveData : _nextStep),
                       style: ElevatedButton.styleFrom(
-                        shadowColor: Color(0),
+                        shadowColor: const Color(0),
                         backgroundColor: const Color(0xFF3B82F6),
                         foregroundColor: Colors.white,
-                      
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
                         ),

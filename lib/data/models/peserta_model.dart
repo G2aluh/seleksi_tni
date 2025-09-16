@@ -19,6 +19,7 @@ class PesertaModel {
   final String namaIbu;
   final String namaWali;
   final String alamatOrtu;
+  final int? dataDusunId; // Tambahkan field ini
 
   PesertaModel({
     this.id,
@@ -41,6 +42,7 @@ class PesertaModel {
     required this.namaIbu,
     required this.namaWali,
     required this.alamatOrtu,
+    this.dataDusunId, // Tambahkan parameter ini
   });
 
   factory PesertaModel.fromMap(Map<String, dynamic> map) {
@@ -48,23 +50,24 @@ class PesertaModel {
       id: map['id'],
       nisn: map['nisn'],
       namaLengkap: map['nama_lengkap'],
-      jenisKelamin: map['jenis_kelamin'],
-      agama: map['agama'],
-      ttl: map['ttl'],
-      noHp: map['no_hp'],
-      nik: map['nik'],
-      jalan: map['jalan'],
-      rtRw: map['rt_rw'],
-      dusun: map['dusun'],
-      desa: map['desa'],
-      kecamatan: map['kecamatan'],
-      kabupaten: map['kabupaten'],
-      provinsi: map['provinsi'],
-      kodePos: map['kode_pos'],
-      namaAyah: map['nama_ayah'],
-      namaIbu: map['nama_ibu'],
-      namaWali: map['nama_wali'],
-      alamatOrtu: map['alamat_ortu'],
+      jenisKelamin: map['jenis_kelamin'] ?? '',
+      agama: map['agama'] ?? '',
+      ttl: map['ttl'] ?? '',
+      noHp: map['no_hp'] ?? '',
+      nik: map['nik'] ?? '',
+      jalan: map['jalan'] ?? '',
+      rtRw: map['rt_rw'] ?? '',
+      dusun: map['dusun'] ?? '',
+      desa: map['desa'] ?? '',
+      kecamatan: map['kecamatan'] ?? '',
+      kabupaten: map['kabupaten'] ?? '',
+      provinsi: map['provinsi'] ?? '',
+      kodePos: map['kode_pos'] ?? '',
+      namaAyah: map['nama_ayah'] ?? '',
+      namaIbu: map['nama_ibu'] ?? '',
+      namaWali: map['nama_wali'] ?? '',
+      alamatOrtu: map['alamat_ortu'] ?? '',
+      dataDusunId: map['data_dusun_id'], // Tambahkan ini
     );
   }
 
@@ -89,6 +92,7 @@ class PesertaModel {
       'nama_ibu': namaIbu,
       'nama_wali': namaWali,
       'alamat_ortu': alamatOrtu,
+      'data_dusun_id': dataDusunId, // Tambahkan ini
     };
   }
 }
