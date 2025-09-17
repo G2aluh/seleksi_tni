@@ -6,6 +6,7 @@ import 'detail_peserta_page.dart';
 import 'form_peserta_page.dart';
 import '../widgets/custom_toast.dart';
 
+/// Halaman utama: menampilkan list peserta dan aksi CRUD.
 class PesertaListPage extends StatefulWidget {
   const PesertaListPage({super.key});
 
@@ -13,6 +14,7 @@ class PesertaListPage extends StatefulWidget {
   State<PesertaListPage> createState() => _PesertaListPageState();
 }
 
+/// State untuk mengelola fetching data dan aksi pada list peserta.
 class _PesertaListPageState extends State<PesertaListPage> {
   final SupabaseService _supabaseService = SupabaseService();
   List<PesertaModel> _pesertaList = [];
@@ -24,6 +26,7 @@ class _PesertaListPageState extends State<PesertaListPage> {
     _loadPeserta();
   }
 
+ /// Memuat data peserta dari Supabase dan menangani error koneksi/server.
  Future<void> _loadPeserta() async {
   setState(() {
     _isLoading = true;
@@ -52,6 +55,7 @@ class _PesertaListPageState extends State<PesertaListPage> {
 }
 
 
+  /// Menghapus peserta dan refresh list dengan notifikasi.
   Future<void> _deletePeserta(int id) async {
     try {
       await _supabaseService.deletePeserta(id);

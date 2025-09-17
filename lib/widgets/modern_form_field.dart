@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+/// TextFormField bergaya modern dengan API yang lebih ringkas.
 class ModernFormField extends StatelessWidget {
   final String label;
   final TextEditingController controller;
@@ -92,6 +93,7 @@ class ModernFormField extends StatelessWidget {
   }
 }
 
+/// Dropdown bergaya modern konsisten dengan `ModernFormField`.
 class ModernDropdownField extends StatelessWidget {
   final String label;
   final String? value;
@@ -166,6 +168,7 @@ class ModernDropdownField extends StatelessWidget {
   }
 }
 
+/// Date picker field read-only yang mengisi controller dengan format dd/mm/yyyy.
 class ModernDateField extends StatelessWidget {
   final String label;
   final TextEditingController controller;

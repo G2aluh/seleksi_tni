@@ -6,6 +6,9 @@ import '../widgets/modern_form_field.dart';
 import '../widgets/form_section.dart';
 import '../widgets/custom_toast.dart';
 
+/// Form tambah/edit peserta dengan 3 langkah (step):
+/// 0. Data Pribadi, 1. Alamat, 2. Orang Tua/Wali
+/// Jika `peserta` null → mode create, selain itu → mode edit (pre-fill).
 class FormPesertaPage extends StatefulWidget {
   final PesertaModel? peserta; // kalau null → create, kalau ada → update
 
@@ -19,9 +22,9 @@ class _FormPesertaPageState extends State<FormPesertaPage> {
   final _formKey = GlobalKey<FormState>();
   final SupabaseService service = SupabaseService();
   bool _isLoading = false;
-  bool _isLoadingSuggestions = false; // Untuk indikator loading di autocomplete
+  bool _isLoadingSuggestions = false; // Indikator loading saat autocomplete dusun
   int _currentStep = 0;
-  int? _dataDusunId; // Untuk menyimpan ID dari data_dusun
+  int? _dataDusunId; // Menyimpan foreign key ke tabel data_dusun
 
   // Controller
   final TextEditingController nisnC = TextEditingController();
@@ -51,7 +54,7 @@ class _FormPesertaPageState extends State<FormPesertaPage> {
     provinsiC.text = 'Jawa Timur';
     super.initState();
     if (widget.peserta != null) {
-      // Isi data kalau mode edit
+      // Mode edit: isi semua controller dan metadata dari model
       final p = widget.peserta!;
       nisnC.text = p.nisn;
       namaC.text = p.namaLengkap;
@@ -85,6 +88,7 @@ class _FormPesertaPageState extends State<FormPesertaPage> {
     }
   }
 
+  /// Pindah ke step berikutnya jika valid.
   void _nextStep() {
     if (_formKey.currentState!.validate() && _validateCurrentStep()) {
       setState(() {
@@ -93,12 +97,14 @@ class _FormPesertaPageState extends State<FormPesertaPage> {
     }
   }
 
+  /// Kembali ke step sebelumnya.
   void _previousStep() {
     setState(() {
       _currentStep--;
     });
   }
 
+  /// Validasi minimal per-step agar navigasi antar langkah terjaga.
   bool _validateCurrentStep() {
     switch (_currentStep) {
       case 0: // Data Pribadi
@@ -129,6 +135,7 @@ class _FormPesertaPageState extends State<FormPesertaPage> {
     }
   }
 
+  /// Simpan data ke Supabase: insert saat create, update saat edit.
   Future<void> _saveData() async {
     if (_formKey.currentState!.validate() && _validateCurrentStep()) {
       setState(() {
@@ -183,6 +190,7 @@ class _FormPesertaPageState extends State<FormPesertaPage> {
     }
   }
 
+  /// Komponen indikator progress langkah di bagian atas form.
   Widget _buildProgressStep(int step, String title, IconData icon) {
     bool isActive = _currentStep == step;
     bool isCompleted = _currentStep > step;
@@ -218,6 +226,7 @@ class _FormPesertaPageState extends State<FormPesertaPage> {
     );
   }
 
+  /// Merender isi form berdasarkan `step` aktif.
   Widget _buildStepContent() {
     switch (_currentStep) {
       case 0:
@@ -231,6 +240,7 @@ class _FormPesertaPageState extends State<FormPesertaPage> {
     }
   }
 
+  /// Step 0: Data pribadi dan identitas dasar peserta.
   Widget _buildDataPribadiStep() {
     return FormSection(
       title: "Data Pribadi",
@@ -340,6 +350,7 @@ class _FormPesertaPageState extends State<FormPesertaPage> {
     );
   }
 
+  /// Step 1: Alamat lengkap. Field "Dusun" memiliki Autocomplete terhubung DB.
   Widget _buildAlamatStep() {
     return FormSection(
       title: "Alamat",
@@ -369,6 +380,8 @@ class _FormPesertaPageState extends State<FormPesertaPage> {
           validator: (v) => v == null || v.isEmpty ? "RT/RW wajib diisi" : null,
         ),
         const SizedBox(height: 16),
+        // Autocomplete dusun → ambil saran dari Supabase dan
+        // auto-isi desa/kecamatan/kabupaten/kode pos + simpan dataDusunId
         Autocomplete<String>(
           optionsBuilder: (TextEditingValue textEditingValue) async {
             if (textEditingValue.text.isEmpty) {
@@ -521,6 +534,7 @@ class _FormPesertaPageState extends State<FormPesertaPage> {
     );
   }
 
+  /// Step 2: Data orang tua/wali.
   Widget _buildOrangTuaStep() {
     return FormSection(
       title: "Orang Tua / Wali",

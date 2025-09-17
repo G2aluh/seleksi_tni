@@ -1,3 +1,5 @@
+/// Representasi entitas peserta di aplikasi.
+/// Pemetaan kolom DB (snake_case) ke properti Dart (camelCase).
 class PesertaModel {
   final int? id;
   final String nisn;
@@ -45,6 +47,7 @@ class PesertaModel {
     this.dataDusunId, // Tambahkan parameter ini
   });
 
+  /// Membuat instance dari hasil query Supabase.
   factory PesertaModel.fromMap(Map<String, dynamic> map) {
     return PesertaModel(
       id: map['id'],
@@ -71,6 +74,7 @@ class PesertaModel {
     );
   }
 
+  /// Mengubah model menjadi map untuk insert/update ke Supabase.
   Map<String, dynamic> toMap() {
     return {
       'nisn': nisn,

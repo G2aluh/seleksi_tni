@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+/// Wrapper section kartu untuk mengelompokkan field form dengan header berikon.
 class FormSection extends StatelessWidget {
   final String title;
   final IconData icon;
