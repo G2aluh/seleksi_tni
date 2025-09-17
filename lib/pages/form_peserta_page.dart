@@ -27,7 +27,7 @@ class _FormPesertaPageState extends State<FormPesertaPage> {
   int _currentStep = 0;
   int? _dataDusunId; // Menyimpan foreign key ke tabel data_dusun
 
-  // Controller
+  // Controller -
   final TextEditingController nisnC = TextEditingController();
   final TextEditingController namaC = TextEditingController();
   final TextEditingController agamaC = TextEditingController();
@@ -253,19 +253,22 @@ class _FormPesertaPageState extends State<FormPesertaPage> {
           label: "NISN",
           controller: nisnC,
           keyboardType: TextInputType.number,
-          inputFormatters: [
-            FilteringTextInputFormatter.digitsOnly, // Hanya izinkan angka
-            LengthLimitingTextInputFormatter(
-              10,
-            ), // Batas panjang (misalnya, 10 digit untuk NISN)
-          ],
           prefixIcon: const Icon(
             Icons.badge,
             size: 16,
             color: Color(0xFF6B7280),
           ),
-          validator: (v) => v == null || v.isEmpty ? "NISN wajib diisi" : null,
+          validator: (v) {
+            if (v == null || v.isEmpty) {
+              return "NISN wajib diisi";
+            }
+            if (v.length < 10) {
+              return "NISN harus terdiri dari 10 digit";
+            }
+            return null;
+          },
         ),
+
         const SizedBox(height: 16),
         ModernFormField(
           label: "Nama Lengkap",
@@ -288,9 +291,20 @@ class _FormPesertaPageState extends State<FormPesertaPage> {
           validator: (v) => v == null ? "Jenis kelamin wajib diisi" : null,
         ),
         const SizedBox(height: 16),
-        ModernFormField(
+        ModernDropdownField(
           label: "Agama",
-          controller: agamaC,
+          value: agamaC.text.isEmpty ? null : agamaC.text,
+          items: const [
+            "Islam",
+            "Kristen",
+            "Katolik",
+            "Hindu",
+            "Buddha",
+            "Konghucu",
+          ],
+          onChanged: (val) {
+            setState(() => agamaC.text = val ?? "");
+          },
           prefixIcon: const Icon(
             Icons.church,
             size: 16,
@@ -422,6 +436,10 @@ class _FormPesertaPageState extends State<FormPesertaPage> {
             }
           },
           fieldViewBuilder: (context, controller, focusNode, onFieldSubmitted) {
+            if (controller.text.isEmpty && dusunC.text.isNotEmpty) {
+              controller.text = dusunC.text;
+            }
+
             return ModernFormField(
               label: "Dusun",
               controller: controller,
@@ -440,8 +458,10 @@ class _FormPesertaPageState extends State<FormPesertaPage> {
                   : null,
               validator: (v) =>
                   v == null || v.isEmpty ? "Dusun wajib diisi" : null,
+              onChanged: (val) => dusunC.text = val ?? '',
             );
           },
+
           optionsViewBuilder: (context, onSelected, options) {
             return Align(
               alignment: Alignment.topLeft,

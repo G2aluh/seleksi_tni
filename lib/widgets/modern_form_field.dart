@@ -11,16 +11,21 @@ class ModernFormField extends StatelessWidget {
   final Widget? suffixIcon;
   final bool obscureText;
   final int? maxLines;
+  final void Function(String?)? onChanged;
   final String? hintText;
+  final Color? backgroundColor;
   final bool readOnly;
   final FocusNode? focusNode;
-  final List<TextInputFormatter>? inputFormatters; // Tambahkan ini
+
+  final List<TextInputFormatter>? inputFormatters;
 
   const ModernFormField({
     super.key,
     required this.label,
     required this.controller,
     this.keyboardType,
+    this.backgroundColor,
+    this.onChanged,
     this.validator,
     this.prefixIcon,
     this.suffixIcon,

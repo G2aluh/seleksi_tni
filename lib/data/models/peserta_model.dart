@@ -21,7 +21,7 @@ class PesertaModel {
   final String namaIbu;
   final String namaWali;
   final String alamatOrtu;
-  final int? dataDusunId; 
+  final int? dataDusunId;
 
   PesertaModel({
     this.id,
@@ -44,7 +44,7 @@ class PesertaModel {
     required this.namaIbu,
     required this.namaWali,
     required this.alamatOrtu,
-    this.dataDusunId, 
+    this.dataDusunId,
   });
 
   /// Membuat instance dari hasil query Supabase.
@@ -70,7 +70,7 @@ class PesertaModel {
       namaIbu: map['nama_ibu'] ?? '',
       namaWali: map['nama_wali'] ?? '',
       alamatOrtu: map['alamat_ortu'] ?? '',
-      dataDusunId: map['data_dusun_id'], 
+      dataDusunId: map['data_dusun_id'],
     );
   }
 

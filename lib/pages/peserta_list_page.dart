@@ -204,6 +204,7 @@ class _PesertaListPageState extends State<PesertaListPage> {
                                         ),
                                       ],
                                     ),
+
                                     const SizedBox(height: 2),
                                     Row(
                                       children: [

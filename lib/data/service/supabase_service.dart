@@ -51,9 +51,10 @@ class SupabaseService {
   Future<Map<String, dynamic>?> getDusunDetails(String dusun) async {
     final response = await supabase
         .from('data_dusun')
-        .select('id, kabupaten, kecamatan, desa, kode_pos')
+        .select('id, dusun, kabupaten, kecamatan, desa, kode_pos')
         .eq('dusun', dusun)
         .maybeSingle();
+    print('Dusun details for $dusun: $response');
     return response;
   }
 }

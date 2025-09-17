@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 /// Dialog error untuk koneksi internet dan masalah server Supabase.
 /// Menyediakan tombol aksi retry yang dipasok dari caller.
-/// 🔌 Dialog error untuk no internet
+///  Dialog error untuk no internet
 void showNoInternetDialog(BuildContext context, VoidCallback onRetry) {
   showDialog(
     context: context,
@@ -34,7 +34,7 @@ void showNoInternetDialog(BuildContext context, VoidCallback onRetry) {
   );
 }
 
-/// ☁️ Dialog error untuk Supabase
+/// Dialog error untuk Supabase
 void showSupabaseErrorDialog(
   BuildContext context,
   String message,
@@ -42,7 +42,7 @@ void showSupabaseErrorDialog(
 ) {
   showDialog(
     context: context,
-    barrierDismissible: false, // ⛔ tidak bisa close manual
+    barrierDismissible: false,
     builder: (_) => AlertDialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       title: Row(
