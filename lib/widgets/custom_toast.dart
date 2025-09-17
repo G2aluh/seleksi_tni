@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+/// Snackbar modern minimalis untuk feedback singkat (success/error/info/warning).
 class CustomToast {
   static void success(BuildContext context, String message) {
     _show(context, message, const Color(0xFF16A34A));

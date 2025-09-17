@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+/// Dialog error untuk koneksi internet dan masalah server Supabase.
+/// Menyediakan tombol aksi retry yang dipasok dari caller.
 /// 🔌 Dialog error untuk no internet
 void showNoInternetDialog(BuildContext context, VoidCallback onRetry) {
   showDialog(

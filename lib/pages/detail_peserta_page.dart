@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import '../data/models/peserta_model.dart';
 
+/// Halaman detail peserta.
+/// Menampilkan informasi peserta dalam beberapa section kartu yang rapi.
 class DetailPesertaPage extends StatelessWidget {
   final PesertaModel peserta;
 
   const DetailPesertaPage({super.key, required this.peserta});
 
+  /// Kartu baris info sederhana (ikon + label + nilai).
   Widget _infoCard(String title, String value, IconData icon, Color color) {
     return Container(
       padding: const EdgeInsets.all(16),
@@ -61,6 +64,7 @@ class DetailPesertaPage extends StatelessWidget {
     );
   }
 
+  /// Kartu section dengan header berwarna dan konten anak.
   Widget _sectionCard(
     String title,
     IconData icon,

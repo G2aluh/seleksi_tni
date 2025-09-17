@@ -2,6 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'pages/peserta_list_page.dart';
 
+/// Entry point aplikasi.
+/// - Inisialisasi plugin Flutter
+/// - Inisialisasi Supabase (backend: auth, database, storage)
+/// Catatan: `anonKey` bersifat public di sisi client. Pastikan aturan RLS di
+/// Supabase sudah aman agar data hanya dapat diakses sesuai izin.
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Supabase.initialize(
@@ -17,9 +22,11 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Shell aplikasi: tema global + halaman awal
     return MaterialApp(
       title: 'Seleksi TNI',
       debugShowCheckedModeBanner: false,
+      // Theme modern minimalis agar konsisten di seluruh widget
       theme: ThemeData(
         primarySwatch: Colors.blue,
         primaryColor: const Color(0xFF3B82F6),
@@ -73,6 +80,7 @@ class MyApp extends StatelessWidget {
           ),
         ),
       ),
+      // Halaman utama: daftar peserta (CRUD via Supabase)
       home: const PesertaListPage(),
     );
   }
