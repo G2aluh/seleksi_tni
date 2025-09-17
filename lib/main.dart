@@ -5,12 +5,12 @@ import 'pages/peserta_list_page.dart';
 /// Entry point aplikasi.
 /// - Inisialisasi plugin Flutter
 /// - Inisialisasi Supabase (backend: auth, database, storage)
-/// Catatan: `anonKey` bersifat public di sisi client. Pastikan aturan RLS di
+/// Catatan: 'anonKey' bersifat public di sisi client. Pastikan aturan RLS di
 /// Supabase sudah aman agar data hanya dapat diakses sesuai izin.
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Supabase.initialize(
-    url: 'https://enccvueaylqmhqdzzqlu.supabase.co',
+    url:'https://enccvueaylqmhqdzzqlu.supabase.co',
     anonKey:
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVuY2N2dWVheWxxbWhxZHp6cWx1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzMxNTQ0MDAsImV4cCI6MjA0ODczMDQwMH0.sU4SdsRb2acqRkJywMpO5iEqAShn2L5Rfjxxn1Zy0K4',
   );

@@ -26,34 +26,32 @@ class _PesertaListPageState extends State<PesertaListPage> {
     _loadPeserta();
   }
 
- /// Memuat data peserta dari Supabase dan menangani error koneksi/server.
- Future<void> _loadPeserta() async {
-  setState(() {
-    _isLoading = true;
-  });
-
-  try {
-    final peserta = await _supabaseService.getPeserta();
+  /// Memuat data peserta dari Supabase dan menangani error koneksi/server.
+  Future<void> _loadPeserta() async {
     setState(() {
-      _pesertaList = peserta;
-      _isLoading = false;
+      _isLoading = true;
     });
-  } catch (e) {
-  setState(() {
-    _isLoading = false;
-  });
 
-  if (e.toString().contains("SocketException")) {
-    // Tidak ada internet
-    showNoInternetDialog(context, _loadPeserta);
-  } else {
-    // Masalah koneksi Supabase
-    showSupabaseErrorDialog(context, e.toString(), _loadPeserta);
+    try {
+      final peserta = await _supabaseService.getPeserta();
+      setState(() {
+        _pesertaList = peserta;
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
+
+      if (e.toString().contains("SocketException")) {
+        // Tidak ada internet
+        showNoInternetDialog(context, _loadPeserta);
+      } else {
+        // Masalah koneksi Supabase
+        showSupabaseErrorDialog(context, e.toString(), _loadPeserta);
+      }
+    }
   }
-}
-
-}
-
 
   /// Menghapus peserta dan refresh list dengan notifikasi.
   Future<void> _deletePeserta(int id) async {
@@ -357,7 +355,7 @@ class _PesertaListPageState extends State<PesertaListPage> {
       context: context,
       builder: (context) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        
+
         title: Row(
           children: [
             Icon(Icons.warning, color: Colors.orange[600], size: 24),

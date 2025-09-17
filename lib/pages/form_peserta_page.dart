@@ -22,7 +22,8 @@ class _FormPesertaPageState extends State<FormPesertaPage> {
   final _formKey = GlobalKey<FormState>();
   final SupabaseService service = SupabaseService();
   bool _isLoading = false;
-  bool _isLoadingSuggestions = false; // Indikator loading saat autocomplete dusun
+  bool _isLoadingSuggestions =
+      false; // Indikator loading saat autocomplete dusun
   int _currentStep = 0;
   int? _dataDusunId; // Menyimpan foreign key ke tabel data_dusun
 
@@ -84,7 +85,7 @@ class _FormPesertaPageState extends State<FormPesertaPage> {
       ibuC.text = p.namaIbu;
       waliC.text = p.namaWali;
       alamatOrtuC.text = p.alamatOrtu;
-      _dataDusunId = p.dataDusunId; 
+      _dataDusunId = p.dataDusunId;
     }
   }
 
